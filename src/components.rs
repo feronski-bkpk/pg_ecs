@@ -7,5 +7,7 @@ pub struct Render {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-// тег для сущности
 pub struct Player;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Enemy;
