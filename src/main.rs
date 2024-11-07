@@ -15,6 +15,10 @@ mod prelude {
     pub use legion::*;
     pub use legion::world::SubWorld;
     pub use legion::systems::CommandBuffer;
+    pub const TEXTURE_ASCII_X32: &str = "terminal32x32.png";
+    pub const TEXTURE_ASCII_X8: &str = "terminal8x8.png";
+    pub const TEXTURE_DUNGEON: &str = "dungeonfont.png";
+    pub const TEXTURE_EXAMPLE: &str = "example.png";
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH/2;
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT/2;
     pub const SCREEN_WIDTH: i32 = 80;
@@ -73,7 +77,11 @@ impl GameState for State {
         ctx.cls();
         ctx.set_active_console(1);
         ctx.cls();
+        ctx.set_active_console(2);
+        ctx.cls();
         self.resources.insert(ctx.key);
+        ctx.set_active_console(0);
+        self.resources.insert(Point::from_tuple(ctx.mouse_pos()));
 
         let current_state = self.resources.get::<TurnState>().unwrap().clone();
         match current_state {
@@ -103,9 +111,11 @@ fn main() -> BError {
         .with_dimensions(DISPLAY_WIDTH, DISPLAY_HEIGHT)
         .with_tile_dimensions(32, 32)
         .with_resource_path("resources/")
-        .with_font("dungeonfont.png", 32, 32)
-        .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
-        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
+        .with_font(TEXTURE_DUNGEON, 32, 32)
+        .with_font(TEXTURE_ASCII_X8, 8, 8)
+        .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, TEXTURE_DUNGEON)
+        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, TEXTURE_DUNGEON)
+        .with_simple_console_no_bg(SCREEN_WIDTH*2, SCREEN_HEIGHT*2, TEXTURE_ASCII_X8)
         .build()?;
 
     // запуск игрового цикла (новой игры)
