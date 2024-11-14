@@ -17,8 +17,7 @@ mod prelude {
     pub use legion::systems::CommandBuffer;
     pub const TEXTURE_ASCII_X32: &str = "terminal32x32.png";
     pub const TEXTURE_ASCII_X8: &str = "terminal8x8.png";
-    pub const TEXTURE_DUNGEON: &str = "dungeonfont.png";
-    pub const TEXTURE_EXAMPLE: &str = "example.png";
+    pub const TEXTURE_DUNGEON: &str = "dungeon_texture.png";
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH/2;
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT/2;
     pub const SCREEN_WIDTH: i32 = 80;

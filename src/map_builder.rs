@@ -23,7 +23,7 @@ impl MapBuilder {
         mb.fill(TileType::Wall);
         mb.build_random_rooms(rng);
         mb.build_corridors(rng);
-        mb.player_start = mb.rooms[0].center(); // помещение персонажа в центр первой комнаты
+        mb.player_start = mb.rooms[0].center(); // положение персонажа в центр первой комнаты
         mb
     }
 
