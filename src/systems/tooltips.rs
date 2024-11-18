@@ -14,13 +14,13 @@ pub fn tooltips(
     let offset = Point::new(camera.left_x, camera.top_y);
     let map_pos = *mouse_pos + offset;
     let mut draw_batch = DrawBatch::new();
-    draw_batch.target(2);
+    draw_batch.target(3);
 
     positions
         .iter(ecs)
         .filter(|(_, pos, _)| **pos == map_pos)
         .for_each(|(entity, _, name)| {
-            let screen_pos = *mouse_pos * 4; // '*4' -> мышь на слое сущностей, а tips на слое подсказок, который в 4 раза больше
+            let screen_pos = *mouse_pos * 4 + Point::new(-3,-1); // '*4' -> мышь на слое background, а tips на слое подсказок, который в 4 раза больше (+ корректирующая константа)
             let display  =if let Ok(health) = ecs.entry_ref(*entity)
                 .unwrap()
                 .get_component::<Health>() {

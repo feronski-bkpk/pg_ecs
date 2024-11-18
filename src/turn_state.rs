@@ -2,5 +2,9 @@
 pub enum TurnState {
     AwaitingInput,
     PlayerTurn,
-    MonsterTurn
+    MonsterTurn,
+    GameStart,
+    GameOver,
+    Victory,
+    Exit
 }

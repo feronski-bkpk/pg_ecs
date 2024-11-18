@@ -35,3 +35,12 @@ pub struct Health {
 
 #[derive(Clone, PartialEq)]
 pub struct Name (pub String);
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ChasingPlayer;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Item;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Portal;

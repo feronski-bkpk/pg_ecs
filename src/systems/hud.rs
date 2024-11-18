@@ -11,10 +11,9 @@ pub fn hud(ecs: &SubWorld) {
         .unwrap();
 
     let mut draw_batch = DrawBatch::new();
-    draw_batch.target(2);
-    draw_batch.print_centered(1, "");
+    draw_batch.target(3);
     draw_batch.bar_horizontal(
-        Point::zero(),
+        Point::new(0, 0),
         SCREEN_WIDTH*2,
         player_health.current,
         player_health.max,
