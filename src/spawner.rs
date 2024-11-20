@@ -13,6 +13,7 @@ pub fn spawn_portal(ecs: &mut World, pos: Point) {
         )
     );
 }
+
 pub fn spawn_player(ecs: &mut World, pos: Point) {
     ecs.push(
         (
@@ -22,13 +23,19 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
                 color: ColorPair::new(WHITE, BLACK),
                 glyph: to_cp437('@')
             },
-            Health { current: 10, max: 10 }
+            Name("Ferris".to_string()),
+            Health { current: 10, max: 10 },
+            FieldOfView::new(8)
         )
     );
 }
 
 fn goblin() -> (i32, String, FontCharType) {
-    (1, "Goblin".to_string(), to_cp437('g'))
+    (1, "Goblins".to_string(), to_cp437('g'))
+}
+
+fn reptile() -> (i32, String, FontCharType) {
+    (3, "Croco".to_string(), to_cp437('c'))
 }
 
 fn orc() -> (i32, String, FontCharType) {
@@ -37,7 +44,8 @@ fn orc() -> (i32, String, FontCharType) {
 
 pub fn spawn_monster(ecs: &mut World, rng: &mut RandomNumberGenerator,  pos: Point) {
     let (hp, name, glyph) = match rng.roll_dice(1,100) {
-        1..=80 => goblin(),
+        1..40 => goblin(),
+        40..=80 => reptile(),
         _ => orc()
     };
 
@@ -49,9 +57,10 @@ pub fn spawn_monster(ecs: &mut World, rng: &mut RandomNumberGenerator,  pos: Poi
                 color: ColorPair::new(WHITE, BLACK),
                 glyph
             },
-            ChasingPlayer{},
+            ChasingPlayer,
+            Name(name),
             Health{ current: hp, max: hp },
-            Name(name)
+            FieldOfView::new(6)
         )
     );
 }

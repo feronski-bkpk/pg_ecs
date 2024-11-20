@@ -1,3 +1,4 @@
+/*
 use crate::prelude::*;
 
 #[system]
@@ -44,3 +45,4 @@ pub fn random_move(
         }
     );
 }
+*/

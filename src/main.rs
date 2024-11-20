@@ -9,7 +9,6 @@ mod spawner;
 mod systems;
 mod turn_state;
 
-// любой модуль, импортирующий прелюдию, будет иметь доступ ко всем её частям //
 mod prelude {
     pub use bracket_lib::prelude::*;
     pub use legion::*;
@@ -33,7 +32,6 @@ mod prelude {
 }
 use prelude::*;
 
-// чертёж игры
 struct State {
     ecs: World,
     resources: Resources,
@@ -42,7 +40,6 @@ struct State {
     monster_systems: Schedule
 }
 impl State {
-    // создание новой игры
     fn new() -> Self {
         let mut ecs = World::default();
         let mut resources = Resources::default();
@@ -123,6 +120,7 @@ impl State {
             }
         }
     }
+
     fn game_over_screen(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(2);
         ctx.print_color_centered(SCREEN_HEIGHT/2 -6, RED, BLACK, "YOU DIED");
@@ -150,11 +148,12 @@ impl State {
 
     fn victory_screen(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(2);
-        ctx.print_color_centered(SCREEN_HEIGHT/2 -6, GREEN, BLACK, "YOU WON");
-        ctx.print_color_centered(SCREEN_HEIGHT/2 -4, WHITE, BLACK, "You can escape.");
-        ctx.print_color_centered(SCREEN_HEIGHT/2 -2, YELLOW, BLACK, "You can try again and have more fun.");
-        ctx.print_color_centered(SCREEN_HEIGHT/2 +2, GREEN, BLACK, "Press ENTER to start a new game.");
-        ctx.print_color_centered(SCREEN_HEIGHT/2 +4, GREEN, BLACK, "Press Escape to exit.");
+        ctx.print_color_centered(SCREEN_HEIGHT/2 -6, GREEN, BLACK, "YOU WIN");
+        ctx.print_color_centered(SCREEN_HEIGHT/2 -4, WHITE, BLACK, "A bright light blinded you... ");
+        ctx.print_color_centered(SCREEN_HEIGHT/2 -2, WHITE, BLACK, "The portal sent you straight to the surface!");
+        ctx.print_color_centered(SCREEN_HEIGHT/2 +0, YELLOW, BLACK,"You can try again and have more fun.");
+        ctx.print_color_centered(SCREEN_HEIGHT/2 +4, GREEN, BLACK, "Press ENTER to start a new game.");
+        ctx.print_color_centered(SCREEN_HEIGHT/2 +6, GREEN, BLACK, "Press Escape to exit.");
 
         if ctx.key.is_some() {
             match ctx.key.unwrap() {
@@ -170,10 +169,6 @@ impl State {
                 _ => {}
             }
         }
-    }
-
-    fn exit(&mut self, ctx: &mut BTerm) {
-        ctx.quitting = true
     }
 }
 
@@ -206,16 +201,16 @@ impl GameState for State {
                 &mut self.resources
             ),
             TurnState::GameStart => {
-                self.game_start_screen(ctx);
+                self.game_start_screen(ctx)
             }
             TurnState::GameOver => {
-                self.game_over_screen(ctx);
+                self.game_over_screen(ctx)
             }
             TurnState::Victory => {
-                self.victory_screen(ctx);
+                self.victory_screen(ctx)
             }
             TurnState::Exit => {
-                self.exit(ctx);
+                ctx.quitting = true
             }
         }
         render_draw_buffer(ctx).expect("Render error")
@@ -223,7 +218,6 @@ impl GameState for State {
 }
 
 fn main() -> BError {
-    // создание терминала
     let context = BTermBuilder::new()
         .with_title("PG-game")
         .with_fps_cap(30.)
@@ -246,3 +240,8 @@ fn main() -> BError {
 // 1 - TEXTURE_DUNGEON   -- entities
 // 2 - ASCII_x8 (big)    -- game screen (win or lose)
 // 3 - ASCII_x8 (small)  -- hud and tooltips
+
+// для wall_hack:
+// в map_render.rs комменть " && (player_fov.visible_tiles.contains(&pt) | map.revealed_tiles[idx]) "
+// в map_render.rs меня на true " let tint = if player_fov.visible_tiles.contains(&pt) "
+// в entity_render комменть " .filter(|(pos, _)| player_fov.visible_tiles.contains(&pos)) "
