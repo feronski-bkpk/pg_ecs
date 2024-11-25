@@ -2,7 +2,8 @@ use crate::prelude::*;
 
 pub fn spawn_portal(ecs: &mut World, pos: Point) {
     ecs.push(
-        (Item,
+        (
+        Item,
         Portal,
         pos,
         Render {
