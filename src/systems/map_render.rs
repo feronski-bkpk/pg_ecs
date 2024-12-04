@@ -6,7 +6,8 @@ use crate::prelude::*;
 pub fn map_render(
     ecs: &SubWorld,
     #[resource] map: &Map,
-    #[resource] camera: &Camera
+    #[resource] camera: &Camera,
+    #[resource] theme: &Box<dyn MapTheme>
 ) {
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(0);
@@ -33,10 +34,8 @@ pub fn map_render(
                     DARK_GRAY
                 };
 
-                let glyph = match map.tiles[idx] {
-                    TileType::Wall => to_cp437('#'),
-                    TileType::Floor => to_cp437('.')
-                };
+                let glyph = theme.tile_to_render(map.tiles[idx]);
+
                 draw_batch.set(pt - offset, ColorPair::new(tint, BLACK), glyph);
             }
         }

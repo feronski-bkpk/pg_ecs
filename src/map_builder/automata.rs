@@ -11,12 +11,14 @@ impl MapArchitect for CellularAutomataArchitect {
             monster_spawns: Vec::new(),
             player_start: Point::zero(),
             portal_start: Point::zero(),
+            theme: super::themes::DungeonTheme::new()
         };
 
         self.random_noise_map(rng, &mut mb.map);
         for _ in 0..10 {
             self.iteration(&mut mb.map);
         }
+        mb.add_boundaries();
 
         let start = self.find_start(&mb.map);
 
