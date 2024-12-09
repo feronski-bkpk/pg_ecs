@@ -6,7 +6,7 @@ mod drunkard;
 mod prefab;
 mod themes;
 
-use empty::EmptyArchitect;
+//use empty::EmptyArchitect;
 use rooms::RoomsArchitect;
 use automata::CellularAutomataArchitect;
 use drunkard::DrunkardsWalkArchitect;

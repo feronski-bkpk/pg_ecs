@@ -24,20 +24,25 @@ pub fn player_input(
                 return *turn_state = TurnState::Exit
             },
             VirtualKeyCode::Space => {
-                let (player, player_pos) = players
+                let size = <&Carried>::query()
                     .iter(ecs)
-                    .find_map(|(entity, pos)| Some((*entity, *pos)))
-                    .unwrap();
+                    .nth(8);
 
-                let mut items = <(Entity, &Item, &Point)>::query();
-                items                                                                                               // если потребуется ограничить инвентарть, то тоит учесть это
-                    .iter(ecs)
-                    .filter(|(_entity, _item, &item_pos)| item_pos == player_pos)
-                    .for_each(|(entity, _item, _item_pos)| {
-                        commands.remove_component::<Point>(*entity);
-                        commands.add_component(*entity, Carried(player))
-                    });
+                if size.is_none() {
+                    let (player, player_pos) = players
+                        .iter(ecs)
+                        .find_map(|(entity, pos)| Some((*entity, *pos)))
+                        .unwrap();
 
+                    let mut items = <(Entity, &Item, &Point)>::query();
+                    items                                                                                               // если потребуется ограничить инвентарть, то cтоит учесть это
+                        .iter(ecs)
+                        .filter(|(_entity, _item, &item_pos)| item_pos == player_pos)
+                        .for_each(|(entity, _item, _item_pos)| {
+                            commands.remove_component::<Point>(*entity);
+                            commands.add_component(*entity, Carried(player))
+                        });
+                }
                 return
             },
             VirtualKeyCode::Left | VirtualKeyCode::A | VirtualKeyCode::Numpad4 => {

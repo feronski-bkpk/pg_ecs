@@ -49,7 +49,7 @@ pub fn spawn_portal(ecs: &mut World, pos: Point) {
             color: ColorPair::new(WHITE, BLACK),
             glyph: to_cp437('|')
         },
-        Name("Strange Portal".to_string())
+        Name("Mysterious Portal".to_string())
         )
     );
 }
@@ -57,7 +57,7 @@ pub fn spawn_portal(ecs: &mut World, pos: Point) {
 pub fn spawn_player(ecs: &mut World, pos: Point) {
     ecs.push(
         (
-            Player,
+            Player { map_level: 0 },
             pos,
             Render {
                 color: ColorPair::new(WHITE, BLACK),
@@ -85,8 +85,8 @@ fn orc() -> (i32, String, FontCharType) {
 pub fn spawn_monster(ecs: &mut World, rng: &mut RandomNumberGenerator,  pos: Point) {
     let (hp, name, glyph) = match rng.roll_dice(1,100) {
         1..40 => goblin(),
-        40..=80 => reptile(),
-        _ => orc()
+        40..=80 => orc(),
+        _ => reptile()
     };
 
     ecs.push(

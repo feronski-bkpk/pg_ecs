@@ -14,9 +14,10 @@ mod prelude {
     pub use legion::*;
     pub use legion::world::SubWorld;
     pub use legion::systems::CommandBuffer;
-    pub const TEXTURE_ASCII_X32: &str = "terminal32x32.png";
+//    pub const TEXTURE_ASCII_X32: &str = "terminal32x32.png";
     pub const TEXTURE_ASCII_X8: &str = "terminal8x8.png";
     pub const TEXTURE_DUNGEON: &str = "dungeon_texture.png";
+    pub const FINAL_LEVEL: u32 = 2;
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH/2;
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT/2;
     pub const SCREEN_WIDTH: i32 = 70;
@@ -44,10 +45,12 @@ impl State {
         let mut ecs = World::default();
         let mut resources = Resources::default();
         let mut rng = RandomNumberGenerator::new();
-        let map_builder = MapBuilder::new(&mut rng);
+        let mut map_builder = MapBuilder::new(&mut rng);
 
         spawn_player(&mut ecs, map_builder.player_start);
-        spawn_portal(&mut ecs, map_builder.portal_start);
+        //spawn_portal(&mut ecs, map_builder.portal_start);
+        let exit_idx = map_builder.map.point2d_to_index(map_builder.portal_start);
+        map_builder.map.tiles[exit_idx] = TileType::Exit;
 
         map_builder.monster_spawns
             .iter()
@@ -71,15 +74,78 @@ impl State {
         self.ecs = World::default();
         self.resources = Resources::default();
         let mut rng = RandomNumberGenerator::new();
-        let map_builder = MapBuilder::new(&mut rng);
+        let mut map_builder = MapBuilder::new(&mut rng);
 
         spawn_player(&mut self.ecs, map_builder.player_start);
-        spawn_portal(&mut self.ecs, map_builder.portal_start);
+        //spawn_portal(&mut self.ecs, map_builder.portal_start);
+        let exit_idx = map_builder.map.point2d_to_index(map_builder.portal_start);
+        map_builder.map.tiles[exit_idx] = TileType::Exit;
 
         map_builder.monster_spawns
             .iter()
             .for_each(|pos| spawn_entity(&mut self.ecs, &mut rng, *pos));
 
+        self.resources.insert(map_builder.map);
+        self.resources.insert(Camera::new(map_builder.player_start));
+        self.resources.insert(TurnState::AwaitingInput);
+        self.resources.insert(map_builder.theme);
+    }
+
+    fn advance_level(&mut self) {
+        let player_entity = *<Entity>::query()
+            .filter(component::<Player>())
+            .iter(&mut self.ecs)
+            .nth(0)
+            .unwrap();
+
+        use std::collections::HashSet;
+        let mut entities_to_keep = HashSet::new();
+        entities_to_keep.insert(player_entity);
+
+        <(Entity, &Carried)>::query()
+            .iter(&self.ecs)
+            .filter(|(_e, carry)| carry.0 == player_entity)
+            .map(|(e, _carry)| *e)
+            .for_each(|e| {
+                entities_to_keep.insert(e);
+            });
+
+        let mut cb = CommandBuffer::new(&mut self.ecs);
+        for e in Entity::query().iter(&self.ecs) {
+            if !entities_to_keep.contains(e) {
+                cb.remove(*e)
+            }
+        }
+        cb.flush(&mut self.ecs);
+
+        <&mut FieldOfView>::query()
+            .iter_mut(&mut self.ecs)
+            .for_each(|fov| fov.is_dirty = true);
+
+        let mut rng = RandomNumberGenerator::new();
+        let mut map_builder = MapBuilder::new(&mut rng);
+
+        let mut map_level = 0;
+        <(&mut Player, &mut Point)>::query()
+            .iter_mut(&mut self.ecs)
+            .for_each(|(player, pos)| {
+                player.map_level += 1;
+                map_level = player.map_level;
+                pos.x = map_builder.player_start.x;
+                pos.y = map_builder.player_start.y;
+            }
+        );
+
+        if map_level == FINAL_LEVEL {
+            spawn_portal(&mut self.ecs, map_builder.portal_start);
+        } else {
+            let exit_idx = map_builder.map.point2d_to_index(map_builder.portal_start);
+            map_builder.map.tiles[exit_idx] = TileType::Exit
+        }
+
+        map_builder.monster_spawns
+            .iter()
+            .for_each(|pos| spawn_entity(&mut self.ecs, &mut rng, *pos));
         self.resources.insert(map_builder.map);
         self.resources.insert(Camera::new(map_builder.player_start));
         self.resources.insert(TurnState::AwaitingInput);
@@ -149,7 +215,7 @@ impl State {
     fn victory_screen(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(2);
         ctx.print_color_centered(SCREEN_HEIGHT/2 -6, GREEN, BLACK, "YOU WIN");
-        ctx.print_color_centered(SCREEN_HEIGHT/2 -4, WHITE, BLACK, "A strange portal has led you out of dangerous lands.");
+        ctx.print_color_centered(SCREEN_HEIGHT/2 -4, WHITE, BLACK, "The mysterious portal has led you out of dangerous lands.");
         ctx.print_color_centered(SCREEN_HEIGHT/2 -2, WHITE, BLACK, "But who knows if your journey has come to an end...");
         ctx.print_color_centered(SCREEN_HEIGHT/2 +0, YELLOW, BLACK,"You can try again and have more fun.");
         ctx.print_color_centered(SCREEN_HEIGHT/2 +4, GREEN, BLACK, "Press ENTER to start a new game.");
@@ -205,6 +271,9 @@ impl GameState for State {
             }
             TurnState::GameOver => {
                 self.game_over_screen(ctx)
+            }
+            TurnState::NextLevel => {
+                self.advance_level()
             }
             TurnState::Victory => {
                 self.victory_screen(ctx)
