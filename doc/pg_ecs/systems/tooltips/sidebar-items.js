@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["tooltips","tooltips_system"]};

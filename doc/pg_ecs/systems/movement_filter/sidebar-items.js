@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["movement_filter","movement_filter_system"]};

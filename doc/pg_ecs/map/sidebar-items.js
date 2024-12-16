@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["NUM_TILES"],"enum":["TileType"],"fn":["map_idx"],"struct":["Map"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["entity_render","entity_render_system"]};

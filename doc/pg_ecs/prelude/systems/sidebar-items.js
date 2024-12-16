@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["Step"],"struct":["Builder","CommandBuffer","Executor","Fetch","ResourceTypeId","Resources","Schedule","SyncResources","System","SystemAccess","SystemBuilder","SystemId","UnsafeResources"],"trait":["ParallelRunnable","QuerySet","Resource","ResourceSet","Runnable","SystemFn","WorldWritable"]};

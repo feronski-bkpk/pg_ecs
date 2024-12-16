@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["map_render","map_render_system"]};

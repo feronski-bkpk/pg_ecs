@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["color_pair","hsv","lerpit","named","palette","prelude","rgb","rgba"]};

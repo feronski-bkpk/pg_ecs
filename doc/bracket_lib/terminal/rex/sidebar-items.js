@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["xp_to_console","xp_to_draw_batch"],"struct":["XpCell","XpColor","XpFile","XpLayer"]};

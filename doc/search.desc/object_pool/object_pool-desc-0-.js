@@ -1,1 +1,0 @@
-searchState.loadedDescShard("object_pool", 0, "A thread-safe object pool with automatic return and …\nReturns the argument unchanged.\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.\nCalls <code>U::from(self)</code>.")

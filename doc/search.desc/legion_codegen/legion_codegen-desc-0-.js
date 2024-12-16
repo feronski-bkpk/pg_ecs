@@ -1,1 +1,0 @@
-searchState.loadedDescShard("legion_codegen", 0, "Wraps a function in a system, and generates a new function …")

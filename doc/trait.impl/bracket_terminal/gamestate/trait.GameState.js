@@ -1,3 +1,0 @@
-(function() {var implementors = {
-"pg_ecs":[["impl <a class=\"trait\" href=\"pg_ecs/prelude/trait.GameState.html\" title=\"trait pg_ecs::prelude::GameState\">GameState</a> for <a class=\"struct\" href=\"pg_ecs/struct.State.html\" title=\"struct pg_ecs::State\">State</a>"]]
-};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

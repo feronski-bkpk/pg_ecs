@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["main"],"mod":["camera","components","map","map_builder","prelude","spawner","systems","turn_state"],"struct":["State"]};

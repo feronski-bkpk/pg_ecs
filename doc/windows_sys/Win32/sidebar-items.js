@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["Devices","Foundation","Globalization","Graphics","Media","System","UI"]};

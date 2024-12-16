@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["add_named_colors_to_palette","clear_palette","palette_color","register_palette_color"]};

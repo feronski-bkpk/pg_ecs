@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"constant":["DESIRED_FLOOR","NUM_TILES","STEPS_NUM"],"struct":["DrunkardsWalkArchitect"]};

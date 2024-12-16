@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["use_items","use_items_system"]};
