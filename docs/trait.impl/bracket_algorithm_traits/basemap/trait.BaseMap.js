@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"pg_ecs":[["impl <a class=\"trait\" href=\"pg_ecs/prelude/trait.BaseMap.html\" title=\"trait pg_ecs::prelude::BaseMap\">BaseMap</a> for <a class=\"struct\" href=\"pg_ecs/map/struct.Map.html\" title=\"struct pg_ecs::map::Map\">Map</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

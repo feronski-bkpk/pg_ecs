@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Wraps a function in a system, and generates a new function which constructs that system."><title>system in pg_ecs::prelude - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="pg_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc attr"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../pg_ecs/index.html">pg_ecs</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><h2><a href="index.html">In pg_ecs::prelude</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Attribute Macro <a href="../index.html">pg_ecs</a>::<wbr><a href="index.html">prelude</a>::<wbr><a class="attr" href="#">system</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><pre class="rust item-decl"><code>#[system]</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Wraps a function in a system, and generates a new function which constructs that system.</p>
+<p>There are three types of systems: <code>simple</code> (default), <code>for_each</code> and <code>par_for_each</code>.
+By default, the system macro will create a new function named <code>&lt;attributed_fn_name&gt;_system</code>
+which can be called to construct the system.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>By default, the wrapped function is called once each time the system runs.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[system]
+</span><span class="kw">fn </span>hello_world() {
+   <span class="macro">println!</span>(<span class="string">"hello world"</span>);
+}
+
+Schedule::builder()
+    .add_system(hello_world_system())
+    .build();</code></pre></div>
+<p>The function can request resources with reference parameters marked with
+the <code>#[resource]</code> attribute.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[system]
+</span><span class="kw">fn </span>hello_world(<span class="attr">#[resource] </span>person: <span class="kw-2">&amp;</span>Person) {
+   <span class="macro">println!</span>(<span class="string">"hello, {}"</span>, person.name);
+}</code></pre></div>
+<p>Systems can also request a world or command buffer.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[system]
+</span><span class="kw">fn </span>create_entity(cmd: <span class="kw-2">&amp;mut </span>CommandBuffer) {
+   cmd.push((<span class="number">1usize</span>, <span class="bool-val">false</span>, Person { name: <span class="string">"Jane Doe" </span>}));
+}</code></pre></div>
+<p>Systems can declare access to component types with the <code>#[read_component]</code> and
+<code>#[write_component]</code> attributes.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[system]
+#[read_component(usize)]
+#[write_component(bool)]
+</span><span class="kw">fn </span>run_query(world: <span class="kw-2">&amp;mut </span>SubWorld) {
+    <span class="kw">let </span><span class="kw-2">mut </span>query = &lt;(<span class="kw-2">&amp;</span>usize, <span class="kw-2">&amp;mut </span>bool)&gt;::query();
+    <span class="kw">for </span>(a, b) <span class="kw">in </span>query.iter_mut(world) {
+        <span class="macro">println!</span>(<span class="string">"{} {}"</span>, a, b);
+    }
+}</code></pre></div>
+<p><code>for_each</code> and <code>par_for_each</code> system types can be used to implement the query for you.
+References will be interpreted as <code>Read&lt;T&gt;</code> and <code>Write&lt;T&gt;</code>, while options of references
+(e.g. <code>Option&lt;&amp;Position&gt;</code>) will be interpreted as <code>TryRead&lt;T&gt;</code> and <code>TryWrite&lt;T&gt;</code>. You can
+request the entity ID via a <code>&amp;Entity</code> parameter.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[system(for_each)]
+</span><span class="kw">fn </span>update_positions(pos: <span class="kw-2">&amp;mut </span>Position, vel: <span class="kw-2">&amp;</span>Velocity, <span class="attr">#[resource] </span>time: <span class="kw-2">&amp;</span>Time) {
+    pos.x += vel.x * time.seconds;
+}</code></pre></div>
+<p><code>for_each</code> and <code>par_for_each</code> systems can request attitional filters for their query via the
+<code>#[filter]</code> attribute.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[system(for_each)]
+#[filter(maybe_changed::&lt;Position&gt;())]
+</span><span class="kw">fn </span>update_positions(pos: <span class="kw-2">&amp;mut </span>Position, vel: <span class="kw-2">&amp;</span>Velocity, <span class="attr">#[resource] </span>time: <span class="kw-2">&amp;</span>Time) {
+    pos.x += vel.x * time.seconds;
+}</code></pre></div>
+<p>Systems can contain their own state. Add a reference marked with the <code>#[state]</code> parameter to
+your function. This state will be initialized when you construct the system.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[system]
+</span><span class="kw">fn </span>stateful(<span class="attr">#[state] </span>counter: <span class="kw-2">&amp;mut </span>usize) {
+    <span class="kw-2">*</span>counter += <span class="number">1</span>;
+    <span class="macro">println!</span>(<span class="string">"state: {}"</span>, counter);
+}
+
+Schedule::builder()
+     <span class="comment">// initialize state when you construct the system
+    </span>.add_system(stateful_system(<span class="number">5usize</span>))
+    .build();</code></pre></div>
+<p>Systems can contain generic parameters.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="attr">#[system(for_each)]
+</span><span class="kw">fn </span>print_component&lt;T: Component + Debug&gt;(component: <span class="kw-2">&amp;</span>T) {
+    <span class="macro">println!</span>(<span class="string">"{:?}"</span>, component);
+}
+
+Schedule::builder()
+     <span class="comment">// supply generic parameters when constructing the system
+    </span>.add_system(print_component_system::&lt;Position&gt;())
+    .build();</code></pre></div>
+</div></details></section></div></main></body></html>

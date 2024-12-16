@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Worlds store collections of entities. An entity is a collection of components, identified by a unique Entity ID."><title>pg_ecs::prelude::world - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="pg_ecs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../../pg_ecs/index.html">pg_ecs</a><span class="version">0.1.0</span></h2></div><h2 class="location"><a href="#">Module world</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Aliases</a></li></ul></section><h2><a href="../index.html">In pg_ecs::prelude</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../../index.html">pg_ecs</a>::<wbr><a href="../index.html">prelude</a>::<wbr><a class="mod" href="#">world</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Worlds store collections of entities. An entity is a collection of components, identified
+by a unique <a href="struct.Entity.html">Entity</a> ID.</p>
+<h2 id="creating-a-world"><a class="doc-anchor" href="#creating-a-world">§</a>Creating a world</h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span><span class="kw-2">mut </span>world = World::default();</code></pre></div>
+<p><code>World::new()</code> can be used to construct a new world with custom options.</p>
+<h2 id="inserting-entities"><a class="doc-anchor" href="#inserting-entities">§</a>Inserting entities</h2>
+<p>Entities can be inserted via either <code>push</code> (for a single entity) or <code>extend</code> (for a collection
+of entities with the same component types). The world will create a unique ID for each entity
+upon insertion that you can use to refer to that entity later.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// a component is any type that is 'static, sized, send and sync
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq)]
+</span><span class="kw">struct </span>Position {
+    x: f32,
+    y: f32,
+}
+
+<span class="attr">#[derive(Clone, Copy, Debug, PartialEq)]
+</span><span class="kw">struct </span>Velocity {
+    dx: f32,
+    dy: f32,
+}
+
+<span class="comment">// push a component tuple into the world to create an entity
+</span><span class="kw">let </span>entity: Entity = world.push((Position { x: <span class="number">0.0</span>, y: <span class="number">0.0 </span>}, Velocity { dx: <span class="number">0.0</span>, dy: <span class="number">0.0 </span>}));
+
+<span class="comment">// or extend via an IntoIterator of tuples to add many at once
+// this is faster than individual pushes
+</span><span class="kw">let </span>entities: <span class="kw-2">&amp;</span>[Entity] = world.extend(<span class="macro">vec!</span>[
+    (Position { x: <span class="number">0.0</span>, y: <span class="number">0.0 </span>}, Velocity { dx: <span class="number">0.0</span>, dy: <span class="number">0.0 </span>}),
+    (Position { x: <span class="number">1.0</span>, y: <span class="number">1.0 </span>}, Velocity { dx: <span class="number">0.0</span>, dy: <span class="number">0.0 </span>}),
+    (Position { x: <span class="number">2.0</span>, y: <span class="number">2.0 </span>}, Velocity { dx: <span class="number">0.0</span>, dy: <span class="number">0.0 </span>}),
+]);</code></pre></div>
+<p>If your data is already organized as such, you can alternatively insert entites as a
+strucure-of-arrays.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span><span class="kw-2">mut </span>world = World::default();
+<span class="kw">let </span>_entities = world.extend(
+    (
+        <span class="macro">vec!</span>[<span class="number">1usize</span>, <span class="number">2usize</span>, <span class="number">3usize</span>],
+        <span class="macro">vec!</span>[<span class="bool-val">false</span>, <span class="bool-val">true</span>, <span class="bool-val">false</span>],
+        <span class="macro">vec!</span>[<span class="number">5.3f32</span>, <span class="number">5.3f32</span>, <span class="number">5.2f32</span>],
+    ).into_soa()
+);</code></pre></div>
+<p>SoA inserts require all vectors to have the same length. These inserts are faster than inserting
+via an iterator of tuples.</p>
+<h2 id="modifying-entities"><a class="doc-anchor" href="#modifying-entities">§</a>Modifying entities</h2>
+<p>Components can be added or removed from an existing entity via the <a href="struct.Entry.html">Entry</a> API.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// entries return `None` if the entity does not exist
+</span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>entry) = world.entry(entity) {
+    <span class="comment">// add an extra component
+    </span>entry.add_component(<span class="number">12f32</span>);
+
+    <span class="comment">// remove a component
+    </span>entry.remove_component::&lt;usize&gt;();
+}</code></pre></div>
+<p>Note that it is significantly faster to create an entity with it’s initial set of components
+via <code>push</code> or <code>extend</code> than it is to add the components one-by-one after creating the entity.</p>
+<h2 id="accessing-components"><a class="doc-anchor" href="#accessing-components">§</a>Accessing components</h2>
+<p>The fastest way to access a large number of entities’ components is via <a href="../query/index.html">queries</a>.</p>
+<p>The entry API also allows access to an individual entity’s components.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// entries return `None` if the entity does not exist
+</span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>entry) = world.entry(entity) {
+    <span class="comment">// access information about the entity's archetype
+    </span><span class="macro">println!</span>(<span class="string">"{:?} has {:?}"</span>, entity, entry.archetype().layout().component_types());
+
+    <span class="comment">// access the entity's components, returns `None` if the entity does not have the component
+    </span><span class="macro">assert_eq!</span>(entry.get_component::&lt;f32&gt;().unwrap(), <span class="kw-2">&amp;</span><span class="number">12f32</span>);
+}</code></pre></div>
+<h2 id="events"><a class="doc-anchor" href="#events">§</a>Events</h2>
+<p>Notifications about archetype creation and entity insertion/removal from an archetype can be sent
+to an <a href="trait.EventSender.html">EventSender</a> by subscribing to the world. A layout filter specifies
+which archetypes the subscriber is interested in.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="comment">// subscribe to events involving entities with a `Position` with a
+// crossbeam channel.
+</span><span class="kw">let </span>(tx, rx) = crossbeam_channel::unbounded::&lt;legion::world::Event&gt;();
+world.subscribe(tx, component::&lt;Position&gt;());</code></pre></div>
+<h2 id="world-splitting"><a class="doc-anchor" href="#world-splitting">§</a>World splitting</h2>
+<p>World splitting allows mutable access to a world via multiple entries or queries at the same time,
+provided that their component accesses do not conflict with one another.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">let </span><span class="kw-2">mut </span>world = World::default();
+<span class="kw">let </span>entity = world.push((A, B, C));
+<span class="kw">let </span>(<span class="kw-2">mut </span>left, <span class="kw-2">mut </span>right) = world.split::&lt;(Read&lt;A&gt;, Write&lt;B&gt;)&gt;();
+
+<span class="comment">// left only has permission to read A and read/write B.
+</span><span class="kw">let </span>b: <span class="kw-2">&amp;mut </span>B = left.entry_mut(entity).unwrap().get_component_mut::&lt;B&gt;().unwrap();
+
+<span class="comment">// right can access anything _but_ writes to A and read/write to B.
+</span><span class="kw">let </span>a: <span class="kw-2">&amp;</span>A = right.entry_ref(entity).unwrap().get_component::&lt;A&gt;().unwrap();
+<span class="kw">let </span>c: <span class="kw-2">&amp;</span>C = right.entry_ref(entity).unwrap().get_component::&lt;C&gt;().unwrap();</code></pre></div>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Allocate.html" title="struct pg_ecs::prelude::world::Allocate">Allocate</a></div><div class="desc docblock-short">An iterator which yields new entity IDs.</div></li><li><div class="item-name"><a class="struct" href="struct.Duplicate.html" title="struct pg_ecs::prelude::world::Duplicate">Duplicate</a></div><div class="desc docblock-short">A <a href="trait.Merger.html">merger</a> which clones entities from the source world into the destination,
+potentially performing data transformations in the process.</div></li><li><div class="item-name"><a class="struct" href="struct.Entity.html" title="struct pg_ecs::prelude::world::Entity">Entity</a></div><div class="desc docblock-short">An opaque identifier for an entity.</div></li><li><div class="item-name"><a class="struct" href="struct.EntityLocation.html" title="struct pg_ecs::prelude::world::EntityLocation">EntityLocation</a></div><div class="desc docblock-short">The storage location of an entity’s data.</div></li><li><div class="item-name"><a class="struct" href="struct.Entry.html" title="struct pg_ecs::prelude::world::Entry">Entry</a></div><div class="desc docblock-short">Provides safe read and write access to an entity’s components, and the ability to modify the entity.</div></li><li><div class="item-name"><a class="struct" href="struct.EntryMut.html" title="struct pg_ecs::prelude::world::EntryMut">EntryMut</a></div><div class="desc docblock-short">Provides safe read and write access to an entity’s components.</div></li><li><div class="item-name"><a class="struct" href="struct.EntryRef.html" title="struct pg_ecs::prelude::world::EntryRef">EntryRef</a></div><div class="desc docblock-short">Provides safe read-only access to an entity’s components.</div></li><li><div class="item-name"><a class="struct" href="struct.LocationMap.html" title="struct pg_ecs::prelude::world::LocationMap">LocationMap</a></div><div class="desc docblock-short">A map of entity IDs to their storage locations.</div></li><li><div class="item-name"><a class="struct" href="struct.Permissions.html" title="struct pg_ecs::prelude::world::Permissions">Permissions</a></div><div class="desc docblock-short">Describes read and write access to resources.</div></li><li><div class="item-name"><a class="struct" href="struct.StorageAccessor.html" title="struct pg_ecs::prelude::world::StorageAccessor">StorageAccessor</a></div><div class="desc docblock-short">Provides access to the archetypes and entity components contained within a world.</div></li><li><div class="item-name"><a class="struct" href="struct.SubWorld.html" title="struct pg_ecs::prelude::world::SubWorld">SubWorld</a></div><div class="desc docblock-short">Provides access to a subset of the entities of a <code>World</code>.</div></li><li><div class="item-name"><a class="struct" href="struct.World.html" title="struct pg_ecs::prelude::world::World">World</a></div><div class="desc docblock-short">A container of entities.</div></li><li><div class="item-name"><a class="struct" href="struct.WorldId.html" title="struct pg_ecs::prelude::world::WorldId">WorldId</a></div><div class="desc docblock-short">Unique identifier for a <a href="struct.World.html">world</a>.</div></li><li><div class="item-name"><a class="struct" href="struct.WorldOptions.html" title="struct pg_ecs::prelude::world::WorldOptions">WorldOptions</a></div><div class="desc docblock-short">Describes configuration options for the creation of a new <a href="struct.World.html">world</a>.</div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.ArchetypeAccess.html" title="enum pg_ecs::prelude::world::ArchetypeAccess">ArchetypeAccess</a></div><div class="desc docblock-short">Describes which archetypes are available for access.</div></li><li><div class="item-name"><a class="enum" href="enum.ComponentAccess.html" title="enum pg_ecs::prelude::world::ComponentAccess">ComponentAccess</a></div><div class="desc docblock-short">Describes which components are available for access.</div></li><li><div class="item-name"><a class="enum" href="enum.ComponentError.html" title="enum pg_ecs::prelude::world::ComponentError">ComponentError</a></div><div class="desc docblock-short">An error type which describes why an attempt to retrieve a component failed.</div></li><li><div class="item-name"><a class="enum" href="enum.EntityAccessError.html" title="enum pg_ecs::prelude::world::EntityAccessError">EntityAccessError</a></div><div class="desc docblock-short">Error type representing a failure to access entity data.</div></li><li><div class="item-name"><a class="enum" href="enum.EntityRewrite.html" title="enum pg_ecs::prelude::world::EntityRewrite">EntityRewrite</a></div><div class="desc docblock-short">Describes how a merger wishes <code>Entity</code> references inside cloned components to be
+rewritten.</div></li><li><div class="item-name"><a class="enum" href="enum.Event.html" title="enum pg_ecs::prelude::world::Event">Event</a></div><div class="desc docblock-short">Events emitted by a world to subscribers. See <code>World.subscribe(Sender, EntityFilter)</code>.</div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.EntityStore.html" title="trait pg_ecs::prelude::world::EntityStore">EntityStore</a></div><div class="desc docblock-short">The <code>EntityStore</code> trait abstracts access to entity data as required by queries for
+both <a href="struct.World.html">World</a> and <a href="struct.SubWorld.html">SubWorld</a></div></li><li><div class="item-name"><a class="trait" href="trait.EventSender.html" title="trait pg_ecs::prelude::world::EventSender">EventSender</a></div><div class="desc docblock-short">Describes a type which can send entity events.</div></li><li><div class="item-name"><a class="trait" href="trait.Merger.html" title="trait pg_ecs::prelude::world::Merger">Merger</a></div><div class="desc docblock-short">Describes how to merge two <a href="struct.World.html">worlds</a>.</div></li></ul><h2 id="types" class="section-header">Type Aliases<a href="#types" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="type" href="type.EntityHasher.html" title="type pg_ecs::prelude::world::EntityHasher">EntityHasher</a></div><div class="desc docblock-short">A hasher optimized for entity IDs.</div></li></ul></section></div></main></body></html>

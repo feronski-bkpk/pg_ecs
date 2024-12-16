@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["FORTRESS"],"fn":["apply_prefab"]};

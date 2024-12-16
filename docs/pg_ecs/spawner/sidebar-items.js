@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["spawn_level","spawn_player","spawn_portal"],"mod":["template"]};
