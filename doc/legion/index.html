@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Legion aims to be a feature rich high performance ECS library for Rust game projects with minimal boilerplate."><title>legion - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-c5d6553a23f1e5a6.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="legion" data-themes="" data-resource-suffix="" data-rustdoc-version="1.81.0 (eeb90cda1 2024-09-04)" data-channel="1.81.0" data-search-js="search-d234aafac6c221dd.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-d2fab2bf619172d3.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../legion/index.html">legion</a><span class="version">0.3.1</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#reexports">Re-exports</a></li><li><a href="#modules">Modules</a></li><li><a href="#attributes">Attribute Macros</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">legion</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/legion/lib.rs.html#1-212">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Legion aims to be a feature rich high performance ECS library for Rust game projects with minimal boilerplate.</p>
+<h2 id="getting-started"><a class="doc-anchor" href="#getting-started">§</a>Getting Started</h2><h3 id="worlds"><a class="doc-anchor" href="#worlds">§</a>Worlds</h3>
+<p><a href="world/struct.World.html">Worlds</a> are collections of <a href="world/struct.Entity.html">entities</a>, where each entity
+can have an arbitrary collection of <a href="storage/trait.Component.html">components</a> attached.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>legion::<span class="kw-2">*</span>;
+<span class="kw">let </span>world = World::default();</code></pre></div>
+<p>Entities can be inserted via either <code>push</code> (for a single entity) or <code>extend</code> (for a collection of entities with
+the same component types). The world will create a unique ID for each entity upon insertion that you can use
+to refer to that entity later.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// a component is any type that is 'static, sized, send and sync
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq)]
+</span><span class="kw">struct </span>Position {
+    x: f32,
+    y: f32,
+}
+
+<span class="attr">#[derive(Clone, Copy, Debug, PartialEq)]
+</span><span class="kw">struct </span>Velocity {
+    dx: f32,
+    dy: f32,
+}
+
+<span class="comment">// push a component tuple into the world to create an entity
+</span><span class="kw">let </span>entity: Entity = world.push((Position { x: <span class="number">0.0</span>, y: <span class="number">0.0 </span>}, Velocity { dx: <span class="number">0.0</span>, dy: <span class="number">0.0 </span>}));
+
+<span class="comment">// or extend via an IntoIterator of tuples to add many at once (this is faster)
+</span><span class="kw">let </span>entities: <span class="kw-2">&amp;</span>[Entity] = world.extend(<span class="macro">vec!</span>[
+    (Position { x: <span class="number">0.0</span>, y: <span class="number">0.0 </span>}, Velocity { dx: <span class="number">0.0</span>, dy: <span class="number">0.0 </span>}),
+    (Position { x: <span class="number">1.0</span>, y: <span class="number">1.0 </span>}, Velocity { dx: <span class="number">0.0</span>, dy: <span class="number">0.0 </span>}),
+    (Position { x: <span class="number">2.0</span>, y: <span class="number">2.0 </span>}, Velocity { dx: <span class="number">0.0</span>, dy: <span class="number">0.0 </span>}),
+]);</code></pre></div>
+<p>You can access entities via <a href="world/struct.Entry.html">entries</a>. Entries allow you to query an entity to find
+out what types of components are attached to it, to get component references, or to add and remove components.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// entries return `None` if the entity does not exist
+</span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>entry) = world.entry(entity) {
+    <span class="comment">// access information about the entity's archetype
+    </span><span class="macro">println!</span>(<span class="string">"{:?} has {:?}"</span>, entity, entry.archetype().layout().component_types());
+
+    <span class="comment">// add an extra component
+    </span>entry.add_component(<span class="number">12f32</span>);
+
+    <span class="comment">// access the entity's components, returns `None` if the entity does not have the component
+    </span><span class="macro">assert_eq!</span>(entry.get_component::&lt;f32&gt;().unwrap(), <span class="kw-2">&amp;</span><span class="number">12f32</span>);
+}</code></pre></div>
+<p>See the <a href="world/index.html">world module</a> for more information.</p>
+<h3 id="queries"><a class="doc-anchor" href="#queries">§</a>Queries</h3>
+<p>Entries are not the most convenient or performant way to search or bulk-access a world. <a href="query/index.html">Queries</a>
+allow for high performance and expressive iteration through the entities in a world.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// you define a query be declaring what components you want to find, and how you will access them
+</span><span class="kw">let </span><span class="kw-2">mut </span>query = Read::&lt;Position&gt;::query();
+
+<span class="comment">// you can then iterate through the components found in the world
+</span><span class="kw">for </span>position <span class="kw">in </span>query.iter(<span class="kw-2">&amp;</span>world) {
+    <span class="macro">println!</span>(<span class="string">"{:?}"</span>, position);
+}</code></pre></div>
+<p>You can search for entities which have all of a set of components.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// construct a query from a "view tuple"
+</span><span class="kw">let </span><span class="kw-2">mut </span>query = &lt;(<span class="kw-2">&amp;</span>Velocity, <span class="kw-2">&amp;mut </span>Position)&gt;::query();
+
+<span class="comment">// this time we have &amp;Velocity and &amp;mut Position
+</span><span class="kw">for </span>(velocity, position) <span class="kw">in </span>query.iter_mut(<span class="kw-2">&amp;mut </span>world) {
+    position.x += velocity.x;
+    position.y += velocity.y;
+}</code></pre></div>
+<p>You can augment a basic query with additional filters. For example, you can choose to exclude
+entities which also have a certain component, or only include entities for which a certain
+component has changed since the last time the query ran (this filtering is conservative and course-grained)</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// you can use boolean expressions when adding filters
+</span><span class="kw">let </span><span class="kw-2">mut </span>query = &lt;(<span class="kw-2">&amp;</span>Velocity, <span class="kw-2">&amp;mut </span>Position)&gt;::query()
+    .filter(!component::&lt;Ignore&gt;() &amp; maybe_changed::&lt;Position&gt;());
+
+<span class="kw">for </span>(velocity, position) <span class="kw">in </span>query.iter_mut(<span class="kw-2">&amp;mut </span>world) {
+    position.x += velocity.dx;
+    position.y += velocity.dy;
+}</code></pre></div>
+<p>There is much more than can be done with queries. See <a href="query/struct.Query.html">query</a> for
+more information.</p>
+<h3 id="systems"><a class="doc-anchor" href="#systems">§</a>Systems</h3>
+<p>You may have noticed that when we wanted to write to a component, we needed to use <code>iter_mut</code> to iterate through our query.
+But perhaps your application wants to be able to process different components on different entities, perhaps even at the same
+time in parallel? While it is possible to do this manually (see <a href="world/struct.World.html">World</a>::split), this is very difficult
+to do when the different pieces of the application don’t know what components each other need, or might or might not even have
+conflicting access requirements.</p>
+<p>Systems and the <a href="systems/struct.Schedule.html">Schedule</a> automates this process, and can
+even schedule work at a more granular level than you can otherwise do manually.</p>
+<p>A system is a unit of work. Each system is defined as a function which is provided access to queries and shared
+<a href="systems/struct.Resources.html">resources</a>. These systems can then be appended to a schedule, which is a linear
+sequence of systems, ordered by when side effects (such as writes to components) should be observed.</p>
+<p>The schedule will automatically parallelize the execution of all systems whilst maintaining the apparent order of execution from
+the perspective of each system.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// a system fn which loops through Position and Velocity components, and reads
+// the Time shared resource.
+</span><span class="attr">#[system(for_each)]
+</span><span class="kw">fn </span>update_positions(pos: <span class="kw-2">&amp;mut </span>Position, vel: <span class="kw-2">&amp;</span>Velocity, <span class="attr">#[resource] </span>time: <span class="kw-2">&amp;</span>Time) {
+    pos.x += vel.dx * time.elapsed_seconds;
+    pos.y += vel.dy * time.elapsed_seconds;
+}
+
+<span class="comment">// construct a schedule (you should do this on init)
+</span><span class="kw">let </span><span class="kw-2">mut </span>schedule = Schedule::builder()
+    .add_system(update_positions_system())
+    .build();
+
+<span class="comment">// run our schedule (you should do this each update)
+</span>schedule.execute(<span class="kw-2">&amp;mut </span>world, <span class="kw-2">&amp;mut </span>resources);</code></pre></div>
+<p>See the <a href="systems/index.html">systems module</a> and the <a href="attr.system.html">system proc macro</a> for more information.</p>
+<h2 id="feature-flags"><a class="doc-anchor" href="#feature-flags">§</a>Feature Flags</h2>
+<p>Legion provides a few feature flags:</p>
+<ul>
+<li><code>parallel</code> - Enables parallel iterators and parallel schedule execution via the rayon library. Enabled by default.</li>
+<li><code>extended-tuple-impls</code> - Extends the maximum size of view and component tuples from 8 to 24, at the cost of increased compile times. Off by default.</li>
+<li><code>serialize</code> - Enables the serde serialization module and associated functionality. Enabled by default.</li>
+<li><code>crossbeam-events</code> - Implements the <code>EventSender</code> trait for crossbeam <code>Sender</code> channels, allowing them to be used for event subscriptions. Enabled by default.</li>
+<li><code>codegen</code> - Enables the <code>#[system]</code> procedural macro. Enabled by default.</li>
+</ul>
+</div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.any"><code>pub use crate::query::<a class="fn" href="query/fn.any.html" title="fn legion::query::any">any</a>;</code></div></li><li><div class="item-name" id="reexport.component"><code>pub use crate::query::<a class="fn" href="query/fn.component.html" title="fn legion::query::component">component</a>;</code></div></li><li><div class="item-name" id="reexport.maybe_changed"><code>pub use crate::query::<a class="fn" href="query/fn.maybe_changed.html" title="fn legion::query::maybe_changed">maybe_changed</a>;</code></div></li><li><div class="item-name" id="reexport.passthrough"><code>pub use crate::query::<a class="fn" href="query/fn.passthrough.html" title="fn legion::query::passthrough">passthrough</a>;</code></div></li><li><div class="item-name" id="reexport.Fetch"><code>pub use crate::query::<a class="trait" href="query/trait.Fetch.html" title="trait legion::query::Fetch">Fetch</a>;</code></div></li><li><div class="item-name" id="reexport.IntoQuery"><code>pub use crate::query::<a class="trait" href="query/trait.IntoQuery.html" title="trait legion::query::IntoQuery">IntoQuery</a>;</code></div></li><li><div class="item-name" id="reexport.Read"><code>pub use crate::query::<a class="struct" href="query/struct.Read.html" title="struct legion::query::Read">Read</a>;</code></div></li><li><div class="item-name" id="reexport.TryRead"><code>pub use crate::query::<a class="struct" href="query/struct.TryRead.html" title="struct legion::query::TryRead">TryRead</a>;</code></div></li><li><div class="item-name" id="reexport.TryWrite"><code>pub use crate::query::<a class="struct" href="query/struct.TryWrite.html" title="struct legion::query::TryWrite">TryWrite</a>;</code></div></li><li><div class="item-name" id="reexport.Write"><code>pub use crate::query::<a class="struct" href="query/struct.Write.html" title="struct legion::query::Write">Write</a>;</code></div></li><li><div class="item-name" id="reexport.GroupSource"><code>pub use crate::storage::<a class="trait" href="storage/trait.GroupSource.html" title="trait legion::storage::GroupSource">GroupSource</a>;</code></div></li><li><div class="item-name" id="reexport.IntoSoa"><code>pub use crate::storage::<a class="trait" href="storage/trait.IntoSoa.html" title="trait legion::storage::IntoSoa">IntoSoa</a>;</code></div></li><li><div class="item-name" id="reexport.Resources"><code>pub use crate::systems::<a class="struct" href="systems/struct.Resources.html" title="struct legion::systems::Resources">Resources</a>;</code></div></li><li><div class="item-name" id="reexport.Schedule"><code>pub use crate::systems::<a class="struct" href="systems/struct.Schedule.html" title="struct legion::systems::Schedule">Schedule</a>;</code></div></li><li><div class="item-name" id="reexport.SystemBuilder"><code>pub use crate::systems::<a class="struct" href="systems/struct.SystemBuilder.html" title="struct legion::systems::SystemBuilder">SystemBuilder</a>;</code></div></li><li><div class="item-name" id="reexport.Entity"><code>pub use crate::world::<a class="struct" href="world/struct.Entity.html" title="struct legion::world::Entity">Entity</a>;</code></div></li><li><div class="item-name" id="reexport.EntityStore"><code>pub use crate::world::<a class="trait" href="world/trait.EntityStore.html" title="trait legion::world::EntityStore">EntityStore</a>;</code></div></li><li><div class="item-name" id="reexport.World"><code>pub use crate::world::<a class="struct" href="world/struct.World.html" title="struct legion::world::World">World</a>;</code></div></li><li><div class="item-name" id="reexport.WorldOptions"><code>pub use crate::world::<a class="struct" href="world/struct.WorldOptions.html" title="struct legion::world::WorldOptions">WorldOptions</a>;</code></div></li><li><div class="item-name" id="reexport.Registry"><code>pub use crate::serialize::<a class="struct" href="serialize/struct.Registry.html" title="struct legion::serialize::Registry">Registry</a>;</code></div></li></ul><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="query/index.html" title="mod legion::query">query</a></div><div class="desc docblock-short">Queries provide efficient iteration and filtering of entity components in a world.</div></li><li><div class="item-name"><a class="mod" href="serialize/index.html" title="mod legion::serialize">serialize</a></div><div class="desc docblock-short">Serde (de)serialization of worlds.</div></li><li><div class="item-name"><a class="mod" href="storage/index.html" title="mod legion::storage">storage</a></div><div class="desc docblock-short">A “packed archetype” storage model.</div></li><li><div class="item-name"><a class="mod" href="systems/index.html" title="mod legion::systems">systems</a></div><div class="desc docblock-short">Automatic query scheduling and parallel execution.</div></li><li><div class="item-name"><a class="mod" href="world/index.html" title="mod legion::world">world</a></div><div class="desc docblock-short">Worlds store collections of entities. An entity is a collection of components, identified
+by a unique <a href="struct.Entity.html">Entity</a> ID.</div></li></ul><h2 id="attributes" class="section-header">Attribute Macros<a href="#attributes" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="attr" href="attr.system.html" title="attr legion::system">system</a></div><div class="desc docblock-short">Wraps a function in a system, and generates a new function which constructs that system.</div></li></ul></section></div></main></body></html>

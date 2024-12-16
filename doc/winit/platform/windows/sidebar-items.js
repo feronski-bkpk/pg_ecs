@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":["DeviceIdExtWindows","EventLoopBuilderExtWindows","IconExtWindows","MonitorHandleExtWindows","WindowBuilderExtWindows","WindowExtWindows"],"type":["HINSTANCE","HMENU","HMONITOR","HWND"]};

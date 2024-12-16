@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["if_space","player_input","player_input_system","use_item"]};

@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Система "фильтр передвижения". Обрабатывает сущности, которые хотят передвинуться на одну и ту же клетку.
 #[system]
 #[read_component(WantsToMove)]
 pub fn movement_filter(

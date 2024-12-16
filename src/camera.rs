@@ -1,14 +1,16 @@
 use crate::prelude::*;
 
-// чертёж камеры
+/// Структура камеры.
 pub struct Camera {
     pub left_x: i32,
     pub right_x: i32,
     pub top_y: i32,
     pub bottom_y: i32
 }
+
+/// Реализация логики камеры.
 impl Camera {
-    // конструктор камеры
+    /// Конструктор камеры.
     pub fn new(player_position: Point) -> Self {
         Self {
             left_x: player_position.x - DISPLAY_WIDTH/2,
@@ -18,7 +20,7 @@ impl Camera {
         }
     }
 
-    // функция обновления камеры при движении игрока
+    /// Позволяет камере следовать за передвижением персонажа.
     pub fn on_player_move(&mut self, player_position: Point) {
         self.left_x = player_position.x - DISPLAY_WIDTH/2;
         self.right_x = player_position.x + DISPLAY_WIDTH/2;

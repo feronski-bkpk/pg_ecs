@@ -1,0 +1,4 @@
+(function() {var implementors = {
+"legion":[["impl&lt;'a, V, D&gt; <a class=\"trait\" href=\"rayon/iter/trait.ParallelIterator.html\" title=\"trait rayon::iter::ParallelIterator\">ParallelIterator</a> for <a class=\"struct\" href=\"legion/query/struct.ParChunkIter.html\" title=\"struct legion::query::ParChunkIter\">ParChunkIter</a>&lt;'a, V, D&gt;<div class=\"where\">where\n    V: <a class=\"trait\" href=\"legion/query/trait.View.html\" title=\"trait legion::query::View\">View</a>&lt;'a&gt;,\n    D: <a class=\"trait\" href=\"legion/query/trait.DynamicFilter.html\" title=\"trait legion::query::DynamicFilter\">DynamicFilter</a> + 'a,</div>"]],
+"rayon":[]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

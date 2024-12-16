@@ -1,9 +1,12 @@
 use crate::prelude::*;
 use super::MapArchitect;
 
+/// Архитектор "Клеточный автомат".
 pub struct CellularAutomataArchitect {}
 
+/// Реализация типажа архитектора карты для архитектора "Клеточный автомат".
 impl MapArchitect for CellularAutomataArchitect {
+    /// Функция создания карты с помощью архитектора "Клеточный автомат".
     fn new(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder {
         let mut mb = MapBuilder {
             map: Map::new(),
@@ -29,7 +32,9 @@ impl MapArchitect for CellularAutomataArchitect {
     }
 }
 
+/// Реализация функций логики архитектора "Клеточный Автомат".
 impl CellularAutomataArchitect {
+    /// Функция создания карты шума.
     fn random_noise_map(&mut self, rng: &mut RandomNumberGenerator, map: &mut Map) {
         map.tiles.iter_mut().for_each(|t| {
             let roll = rng.range(0, 100);
@@ -42,6 +47,7 @@ impl CellularAutomataArchitect {
         })
     }
 
+    /// Функция подсчёта числа соседей.
     fn count_neighbours(&self, x: i32, y: i32, map: &Map) -> usize {
         let mut neighbours = 0;
 
@@ -55,6 +61,8 @@ impl CellularAutomataArchitect {
         neighbours
     }
 
+    /// Функция прохождения по всем плиткам. Проверяет условия жизни и смерти клеток на карте.
+    /// Если у клетки соседей больше 4 или равно 0, то клетка умирает, иначе живёт дальше.
     fn iteration(&mut self, map: &mut Map) {
         let mut new_tiles = map.tiles.clone();
 
@@ -73,6 +81,7 @@ impl CellularAutomataArchitect {
         map.tiles = new_tiles;
     }
 
+    /// Функция нахождения стартовой позиции.
     fn find_start(&self, map: &Map) -> Point {
         let center = Point::new(SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
 

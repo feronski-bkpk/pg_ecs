@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["ActivateItem","Carried","ChasingPlayer","Damage","Enemy","FieldOfView","Health","Item","Name","Player","Portal","ProvidesDungeonMap","ProvidesHealing","ProvidesPowerUp","Render","WantsToAttack","WantsToMove"]};

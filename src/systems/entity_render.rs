@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Система "отрисовка сущностей". Добавляет в пакет отрисовки сущности.
 #[system]
 #[read_component(Point)]
 #[read_component(Render)]

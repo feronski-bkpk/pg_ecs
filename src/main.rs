@@ -14,10 +14,9 @@ mod prelude {
     pub use legion::*;
     pub use legion::world::SubWorld;
     pub use legion::systems::CommandBuffer;
-//    pub const TEXTURE_ASCII_X32: &str = "terminal32x32.png";
     pub const TEXTURE_ASCII_X8: &str = "terminal8x8.png";
     pub const TEXTURE_DUNGEON: &str = "dungeon_texture.png";
-    pub const FINAL_LEVEL: u32 = 2;
+    pub const FINAL_LEVEL: u32 = 4;
     pub const DISPLAY_WIDTH: i32 = SCREEN_WIDTH/2;
     pub const DISPLAY_HEIGHT: i32 = SCREEN_HEIGHT/2;
     pub const SCREEN_WIDTH: i32 = 70;
@@ -33,6 +32,7 @@ mod prelude {
 }
 use prelude::*;
 
+/// Состав системы.
 struct State {
     ecs: World,
     resources: Resources,
@@ -40,7 +40,10 @@ struct State {
     player_systems: Schedule,
     monster_systems: Schedule
 }
+
+/// Реализация функций основной логики.
 impl State {
+    /// Создаёт игру с нуля при запуске.
     fn new() -> Self {
         let mut ecs = World::default();
         let mut resources = Resources::default();
@@ -52,9 +55,7 @@ impl State {
         let exit_idx = map_builder.map.point2d_to_index(map_builder.portal_start);
         map_builder.map.tiles[exit_idx] = TileType::Exit;
 
-        map_builder.monster_spawns
-            .iter()
-            .for_each(|pos| spawn_entity(&mut ecs, &mut rng, *pos));
+        spawn_level(&mut ecs, &mut rng, 0, &map_builder.monster_spawns);
 
         resources.insert(map_builder.map);
         resources.insert(Camera::new(map_builder.player_start));
@@ -70,6 +71,7 @@ impl State {
         }
     }
 
+    /// Перезапуск игры. Полностью обновляет игру для быстрого старта нового забега.
     fn reset_game_state(&mut self) {
         self.ecs = World::default();
         self.resources = Resources::default();
@@ -81,9 +83,7 @@ impl State {
         let exit_idx = map_builder.map.point2d_to_index(map_builder.portal_start);
         map_builder.map.tiles[exit_idx] = TileType::Exit;
 
-        map_builder.monster_spawns
-            .iter()
-            .for_each(|pos| spawn_entity(&mut self.ecs, &mut rng, *pos));
+        spawn_level(&mut self.ecs, &mut rng, 0, &map_builder.monster_spawns);
 
         self.resources.insert(map_builder.map);
         self.resources.insert(Camera::new(map_builder.player_start));
@@ -91,6 +91,8 @@ impl State {
         self.resources.insert(map_builder.theme);
     }
 
+    /// Переход на следующий уровень. Сохраняет персонажа и предметы в его инвентаре, а всё остальное очищает.
+    /// Также обновляет fov и создаёт новую карту.
     fn advance_level(&mut self) {
         let player_entity = *<Entity>::query()
             .filter(component::<Player>())
@@ -143,15 +145,15 @@ impl State {
             map_builder.map.tiles[exit_idx] = TileType::Exit
         }
 
-        map_builder.monster_spawns
-            .iter()
-            .for_each(|pos| spawn_entity(&mut self.ecs, &mut rng, *pos));
+        spawn_level(&mut self.ecs, &mut rng, map_level as usize, &map_builder.monster_spawns);
+
         self.resources.insert(map_builder.map);
         self.resources.insert(Camera::new(map_builder.player_start));
         self.resources.insert(TurnState::AwaitingInput);
         self.resources.insert(map_builder.theme);
     }
 
+    /// Стартовый экран для консоли с историей-введением, управлением и возможностью старта игры и выхода.
     fn game_start_screen(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(2);
         ctx.print_color_centered(SCREEN_HEIGHT / 2 - 16, YELLOW, BLACK, "=== Introduction ===");
@@ -186,6 +188,7 @@ impl State {
         }
     }
 
+    /// Экран проигрыша для консоли с возможностью возобновления игры и выхода.
     fn game_over_screen(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(2);
         ctx.print_color_centered(SCREEN_HEIGHT/2 -6, RED, BLACK, "YOU DIED");
@@ -212,6 +215,7 @@ impl State {
         }
     }
 
+    /// Экран победы для консоли с возможностью возобновления игры и выхода.
     fn victory_screen(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(2);
         ctx.print_color_centered(SCREEN_HEIGHT/2 -6, GREEN, BLACK, "YOU WIN");
@@ -238,7 +242,11 @@ impl State {
     }
 }
 
+/// Реализация обязательного типажа из bracket-lib.
 impl GameState for State {
+    /// Движок запускает эту функцию на каждом тике.
+    /// Она очищает консоли, добавляет в ресурсы положение мыши (со слоя плиток) и
+    /// обновляет консоль в зависимости от игрового состояния.
     fn tick(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(0);
         ctx.cls();
@@ -286,6 +294,7 @@ impl GameState for State {
     }
 }
 
+/// Точка входа в программу. Задаю настройки проекта и консоли.
 fn main() -> BError {
     let context = BTermBuilder::new()
         .with_title("PG-game")

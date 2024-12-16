@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ArchetypeAccess","ComponentAccess","ComponentError","EntityAccessError","EntityRewrite","Event"],"struct":["Allocate","Duplicate","Entity","EntityLocation","Entry","EntryMut","EntryRef","LocationMap","Permissions","StorageAccessor","SubWorld","World","WorldId","WorldOptions"],"trait":["EntityStore","EventSender","Merger"],"type":["EntityHasher"]};

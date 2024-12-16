@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+/// Система "отрисовка карты". Отрисовывает карту учитывая плитки, которые игрок уже видел или видит
+/// в данный момент.
 #[system]
 #[read_component(FieldOfView)]
 #[read_component(Player)]
@@ -31,7 +33,7 @@ pub fn map_render(
                 let tint = if player_fov.visible_tiles.contains(&pt) {
                     WHITE
                 } else {
-                    DARK_GRAY
+                    (130, 130, 130)
                 };
 
                 let glyph = theme.tile_to_render(map.tiles[idx]);

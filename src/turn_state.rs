@@ -1,3 +1,4 @@
+/// Перечисление игровых состояний.
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum TurnState {
     AwaitingInput,

@@ -3,7 +3,6 @@ use crate::prelude::*;
 mod player_input;
 mod map_render;
 mod entity_render;
-// mod random_move;
 mod end_turn;
 mod movement;
 mod hud;
@@ -14,6 +13,7 @@ mod fov;
 mod movement_filter;
 mod use_items;
 
+/// Планировщик функций состояния "awaiting input".
 pub fn build_input_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(player_input::player_input_system())
@@ -26,6 +26,7 @@ pub fn build_input_scheduler() -> Schedule {
         .build()
 }
 
+/// Планировщик функций состояния "player turn".
 pub fn build_player_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(use_items::use_items_system())
@@ -42,6 +43,7 @@ pub fn build_player_scheduler() -> Schedule {
         .build()
 }
 
+/// Планировщик функций состояния "monster turn".
 pub fn build_monster_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(chasing::chasing_system())

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["build_input_scheduler","build_monster_scheduler","build_player_scheduler"],"mod":["chasing","combat","end_turn","entity_render","fov","hud","map_render","movement","movement_filter","player_input","tooltips","use_items"]};

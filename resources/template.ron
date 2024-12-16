@@ -1,0 +1,82 @@
+Templates(
+    entities: [
+        Template(
+            entity_type: Item,
+            name: "Lesser Healing Potion", glyph: '!', levels: [ 0, 1 ],
+            provides: Some([ ("Healing", 2) ]),
+            frequency: 4
+        ),
+        Template(
+            entity_type: Item,
+            name: "Healing Potion", glyph: '!', levels: [ 2, 3 ],
+            provides: Some([ ("Healing", 4) ]),
+            frequency: 3
+        ),
+        Template(
+            entity_type: Item,
+            name: "Greater Healing Potion", glyph: '!', levels: [ 4 ],
+            provides: Some([ ("Healing", 6) ]),
+            frequency: 3
+        ),
+        Template(
+            entity_type: Item,
+            name: "Power Orb", glyph: 's', levels: [ 2, 3, 4 ],
+            provides: Some([ ("PowerUp", 1)]),
+            frequency: 1
+        ),
+        Template(
+            entity_type: Item,
+            name: "Strange Scroll", glyph: '{', levels: [ 0, 1, 2, 3, 4 ],
+            provides: Some([ ("StrangeScroll", 0) ]),
+            frequency: 1
+        ),
+        Template(
+            entity_type: Enemy,
+            name: "Goblins", glyph: 'g', levels: [ 0, 1 ],
+            hp: Some(1),
+            fov: Some(7),
+            base_damage: Some(3),
+            frequency: 7
+        ),
+        Template(
+            entity_type: Enemy,
+            name: "Skeleton", glyph: 'j', levels: [ 0, 1, 4 ],
+            hp: Some(1),
+            fov: Some(6),
+            base_damage: Some(1),
+            frequency: 6
+        ),
+        Template(
+            entity_type: Enemy,
+            name: "Orc", glyph: 'o', levels: [ 1, 2 ],
+            hp: Some(2),
+            fov: Some(3),
+            base_damage: Some(2),
+            frequency: 4
+        ),
+        Template(
+            entity_type: Enemy,
+            name: "Reptile", glyph: 'c', levels: [ 3, 4 ],
+            hp: Some(3),
+            fov: Some(5),
+            base_damage: Some(3),
+            frequency: 6
+        ),
+        Template(
+            entity_type: Enemy,
+            name: "Ettin", glyph: 'E', levels: [ 2, 3 ],
+            hp: Some(4),
+            fov: Some(3),
+            base_damage: Some(1),
+            frequency: 5
+        ),
+        Template(
+            entity_type: Enemy,
+            name: "Antipaladin", glyph: 'O', levels: [ 4 ],
+            hp: Some(5),
+            fov: Some(6),
+            base_damage: Some(3),
+            frequency: 6
+        ),
+    ],
+)

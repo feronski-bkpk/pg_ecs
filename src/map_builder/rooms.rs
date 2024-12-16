@@ -1,9 +1,12 @@
 use crate::prelude::*;
 use super::MapArchitect;
 
+/// Архитектор "Комнаты".
 pub struct RoomsArchitect {}
 
+/// Реализация типажа архитектора карты для архитектора "Комнаты".
 impl MapArchitect for RoomsArchitect {
+    /// Функция создания карты с помощью архитектора "Комнаты".
     fn new(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder {
         let mut mb = MapBuilder {
             map: Map::new(),

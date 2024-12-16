@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Система "конец хода". Она обрабатывает смену игрового состояния.
 #[system]
 #[read_component(Health)]
 #[read_component(Point)]

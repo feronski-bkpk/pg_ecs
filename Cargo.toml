@@ -6,3 +6,8 @@ edition = "2021"
 [dependencies]
 bracket-lib = "*"
 legion = "*"
+serde = "*"
+ron = "*"
+
+[profile.release]
+lto = "thin"

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["UnknownType"],"struct":["Canon","DeserializeIntoWorld","DeserializeNewWorld","Registry","SerializableWorld"],"trait":["AutoTypeKey","EntitySerializer","TypeKey","WorldDeserializer","WorldSerializer"],"type":["EntityName"]};

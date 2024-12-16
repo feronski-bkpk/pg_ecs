@@ -1,5 +1,6 @@
 use crate::prelude::*;
 
+/// Система "поле зрения". Рассчитывает поля зрения для "грязных" точек.
 #[system]
 #[read_component(Point)]
 #[write_component(FieldOfView)]

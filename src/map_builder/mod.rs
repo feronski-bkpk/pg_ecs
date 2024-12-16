@@ -1,28 +1,29 @@
 use crate::prelude::*;
-mod empty;
 mod rooms;
 mod automata;
 mod drunkard;
 mod prefab;
 mod themes;
 
-//use empty::EmptyArchitect;
 use rooms::RoomsArchitect;
 use automata::CellularAutomataArchitect;
 use drunkard::DrunkardsWalkArchitect;
 use prefab::apply_prefab;
 use themes::*;
 
+/// Типаж архитектора карты.
 trait MapArchitect {
     fn new(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder;
 }
 
+/// Типаж тем карты.
 pub trait MapTheme: Sync+Send {
     fn tile_to_render(&self, tile_type: TileType) -> FontCharType;
 }
 
 const NUM_ROOMS: usize = 20;
 
+/// Состав строителя карты.
 pub struct MapBuilder {
     pub map: Map,
     pub rooms : Vec<Rect>,
@@ -32,7 +33,9 @@ pub struct MapBuilder {
     pub theme: Box<dyn MapTheme>
 }
 
+/// Реализайия функций логики строителя карты.
 impl MapBuilder {
+    /// Функция создания нового строителя карты. Происходит случайный выбор архитектора и темы для карты.
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
         let mut architect: Box<dyn MapArchitect> = match rng.range(0, 3) {
             0 => Box::new(DrunkardsWalkArchitect{}),
@@ -49,6 +52,7 @@ impl MapBuilder {
         mb
     }
 
+    /// Функция создания границ для карты.
     fn add_boundaries(&mut self) {
         for x in 1..SCREEN_WIDTH {
             self.map.tiles[map_idx(x,1)] = TileType::Wall;
@@ -61,10 +65,12 @@ impl MapBuilder {
         }
     }
 
+    /// Функция заполнения карты определённым типом плитки.
     fn fill(&mut self, tile: TileType) {
         self.map.tiles.iter_mut().for_each(|t| *t = tile);
     }
 
+    /// Функция нахождения наибольшего расстояния от плитки "старт игрока".
     fn find_most_distant(&self) -> Point {
         let dijkstra_map = DijkstraMap::new(
            SCREEN_WIDTH,
@@ -85,8 +91,9 @@ impl MapBuilder {
         )
     }
 
+    /// Функция создания монстров. Даёт им положение на карте.
     fn spawn_monsters(&self, start: &Point, rng: &mut RandomNumberGenerator) -> Vec<Point> {
-        const NUM_MONSTERS: usize = 50;
+        const NUM_MONSTERS: usize = 30;
         let mut spawnable_tiles: Vec<Point> = self.map.tiles
             .iter()
             .enumerate()
@@ -103,6 +110,7 @@ impl MapBuilder {
         spawns
     }
 
+    /// Функция построения случайных комнат.
     fn build_random_rooms(&mut self, rng: &mut RandomNumberGenerator) {
         while self.rooms.len() < NUM_ROOMS {
             let room = Rect::with_size(
@@ -131,6 +139,7 @@ impl MapBuilder {
         }
     }
 
+    /// Функция построения вертикальных коридоров.
     fn apply_vertical_tunnel(&mut self, y1: i32, y2: i32, x: i32) {
         use std::cmp::{min, max};
         for y in min(y1,y2) ..= max(y1,y2) {
@@ -140,6 +149,7 @@ impl MapBuilder {
         }
     }
 
+    /// Функция построения горизонтальных коридоров.
     fn apply_horizontal_tunnel(&mut self, x1: i32, x2: i32, y: i32) {
         use std::cmp::{min, max};
         for x in min(x1,x2) ..= max(x1,x2) {
@@ -149,6 +159,7 @@ impl MapBuilder {
         }
     }
 
+    /// Функция построения случайных коридоров.
     fn build_corridors(&mut self, rng: &mut RandomNumberGenerator) {
         let mut rooms = self.rooms.clone();
         rooms.sort_by(|a,b| a.center().x.cmp(&b.center().x));

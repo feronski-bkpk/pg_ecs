@@ -1,0 +1,4 @@
+(function() {var implementors = {
+"legion":[["impl&lt;'a, F: <a class=\"trait\" href=\"legion/query/trait.Fetch.html\" title=\"trait legion::query::Fetch\">Fetch</a>&gt; <a class=\"trait\" href=\"rayon/iter/trait.IntoParallelIterator.html\" title=\"trait rayon::iter::IntoParallelIterator\">IntoParallelIterator</a> for <a class=\"struct\" href=\"legion/query/struct.ChunkView.html\" title=\"struct legion::query::ChunkView\">ChunkView</a>&lt;'a, F&gt;"]],
+"rayon":[]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

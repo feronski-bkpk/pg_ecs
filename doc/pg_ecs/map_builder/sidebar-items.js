@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["NUM_ROOMS"],"mod":["automata","drunkard","prefab","rooms","themes"],"struct":["MapBuilder"],"trait":["MapArchitect","MapTheme"]};

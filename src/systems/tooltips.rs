@@ -4,6 +4,7 @@ use crate::prelude::*;
 #[read_component(Point)]
 #[read_component(Name)]
 #[read_component(Health)]
+#[read_component(Damage)]
 #[read_component(FieldOfView)]
 #[read_component(Player)]
 pub fn tooltips(

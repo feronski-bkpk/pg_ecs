@@ -1,12 +1,15 @@
 use crate::prelude::*;
 use super::MapArchitect;
 
+/// Архитектор "Пьяная прогулка".
 pub struct DrunkardsWalkArchitect {}
 const STEPS_NUM: usize = 400;
 const NUM_TILES: usize = (SCREEN_WIDTH * SCREEN_HEIGHT) as usize;
 const DESIRED_FLOOR: usize = NUM_TILES / 3;
 
+/// Реализация типажа архитектора карты для архитектора "Пьяная прогулка".
 impl MapArchitect for DrunkardsWalkArchitect {
+    /// Функция создания карты с помощью архитектора "Пьяная прогулка".
     fn new(&mut self, rng: &mut RandomNumberGenerator) -> MapBuilder {
         let mut mb = MapBuilder {
             map: Map::new(),
@@ -52,7 +55,10 @@ impl MapArchitect for DrunkardsWalkArchitect {
     }
 }
 
+/// Реализация функций логики архитектора "Пьяная прогулка".
 impl DrunkardsWalkArchitect {
+    /// Функция логики "пьяницы". Плитки, на которые наступает пьяница, становятся плитками пола.
+    /// Передвижение "пьяницы" ограничивается числом шагов.
     fn drunkard(&mut self, start: &Point, rng: &mut RandomNumberGenerator, map: &mut Map) {
         let mut drunkard_pos = start.clone();
         let mut steps_num = 0;
